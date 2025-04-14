@@ -1,4 +1,5 @@
 import re
+from collections import Counter
 
 def validaremail():
     """
@@ -22,7 +23,7 @@ def validar_url():
     try:
         with open('testTPN1.txt', encoding='utf-8') as file:
             contenido = file.read()
-            patron = r'(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}(/[^\s]*)?(\?[^\s]*)?'
+            patron = r'(https://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}(/[^\s]*)?(\?[^\s]*)?'
             matches = re.findall(patron, contenido)
             if matches:
                 urls = [''.join(match) for match in matches]
@@ -52,7 +53,24 @@ def validar_direccion_ipv4():
     except FileNotFoundError:
         print('El archivo no se encontró. Por favor, verifica la ruta.')
 
+def analizar_texto():
+    try:
+        with open('testTPN1.txt', encoding='utf-8') as file:
+            lineas = file.readlines()
+            palabras = []
+            for i, linea in enumerate(lineas, start=1):
+                linea_palabras = linea.strip().split()
+                palabras.extend(linea_palabras)
+                print(f'Línea {i}: {linea_palabras}')
+            contador = Counter(palabras)
+            palabras_mas_frequentes, repeticiones = contador.most_common(1)[0]
+            print(f'Palabra más frecuente: {palabras_mas_frequentes}')
+            print(f'Repeticiones: {repeticiones}')
+    except FileNotFoundError:
+        print('El archivo no se encontró. Por favor, verifica la ruta.')
+
 # Llamadas a las funciones
 validar_url()
 validar_direccion_ipv4()
 validaremail()
+analizar_texto()
