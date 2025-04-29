@@ -1,35 +1,63 @@
 class AFN:
     def __init__(self):
-        self.estados = {'e0', 'e1',}
+        self.estados = {'q0', 'q1', 'q2', 'q3', 'q4', 'q5'}
         self.alfabeto = {'a', 'b'}
         self.transiciones = {
-            'e0': {
-                'a': ['e0'],
-                'b': ['e0'],
-                'ε': ['e1']
+            'q0': {
+                'ε': ['q1', 'q2', 'q5']
             },
-            'e1' : {}
+            'q1': {
+                'a': ['q3']
+            },
+            'q2': {
+                'b': ['q4']
+            },
+            'q3': {
+                'ε': ['q5']
+            },
+            'q4': {
+                'ε': ['q5']
+            },
+            'q5': {
+                'ε': ['q0'] 
+            }
         }
-        self.estado_inicial = 'e0'
-        self.estados_finales = {'e1'}
+        self.estado_inicial = 'q0'
+        self.estados_finales = {'q5'}
     
-    def mover(self, estado, simbolo):
+    def epsilon_cierre(self, estados):
+        stack = list(estados)
+        closure = set(estados)
+        
+        while stack:
+            estado = stack.pop()
+            for siguiente in self.transiciones.get(estado, {}).get('ε', []):
+                if siguiente not in closure:
+                    closure.add(siguiente)
+                    stack.append(siguiente)
+        return closure
+    
+    def mover(self, estados, simbolo):
         nuevos_estados = set()
-        if simbolo in self.transiciones.get(estado, {}):
-            nuevos_estados.update(self.transiciones[estado][simbolo])
+        for estado in estados:
+            if simbolo in self.transiciones.get(estado, {}):
+                nuevos_estados.update(self.transiciones[estado][simbolo])
         return nuevos_estados
 
+    def acepta(self, cadena):
+        estados_actuales = self.epsilon_cierre({self.estado_inicial})
+        
+        for simbolo in cadena:
+            estados_actuales = self.mover(estados_actuales, simbolo)
+            estados_actuales = self.epsilon_cierre(estados_actuales)
+        
+        return any(estado in self.estados_finales for estado in estados_actuales)
+
+
 afn = AFN()
-test_strings = ["ε", "a", "b", "ab", "ba", "aab", "abb", "bba", "abab", "abba", "aaa", "bbb"]
+
+test_strings = ["a", "b", "ab", "bas", "aab", "abb", "bba", "abab", "abba", "aaa", "bbb", ""]
 
 for string in test_strings:
-    estado_actual = afn.estado_inicial
-    print(f"Procesando cadena: {string}")
-    for simbolo in string:
-        siguientes_estados = afn.mover(estado_actual, simbolo)
-        print(f"Desde {estado_actual} con '{simbolo}' -> {siguientes_estados}")
-        if siguientes_estados:
-            estado_actual = list(siguientes_estados)[0]
-        else:
-            break
-    print()
+    resultado = afn.acepta(string)
+    print(f"Cadena '{string}': {'Aceptada' if resultado else 'Rechazada'}")
