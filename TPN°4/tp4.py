@@ -186,10 +186,8 @@ def insertar_batch(nombre_archivo):
 
             artista, track, album, uri, duracion, url_spotify, url_youtube, likes, views = map(str.strip, fila)
 
-<<<<<<< HEAD
             if not validar_numeros(likes, views):
                 print(f"❌ Registro inválido por valores incorrectos en likes/views: {fila}")
-=======
             if not all([
                 validar_regex("Artista", artista, REGEX_TEXTO),
                 validar_regex("Track", track, REGEX_TEXTO),
@@ -201,7 +199,6 @@ def insertar_batch(nombre_archivo):
                 validar_numeros(likes, views)
             ]):
                 #print(f"❌ Registro inválido: {fila}")
->>>>>>> main
                 continue
 
             duracion_ms = duracion_a_ms(duracion)
