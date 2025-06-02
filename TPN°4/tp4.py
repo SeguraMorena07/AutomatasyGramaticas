@@ -142,6 +142,7 @@ def insertar_batch(nombre_archivo): #ARREGLAR BATCH
         next(lector)
         for fila in lector:
             if len(fila) < 9:
+                print(f"❌ Registro inválido: {fila}")
                 continue
             artista, track, album, uri, duracion, url_spotify, url_youtube, likes, views = map(str.strip, fila)
 
@@ -155,6 +156,7 @@ def insertar_batch(nombre_archivo): #ARREGLAR BATCH
                 validar_regex("URL YouTube", url_youtube, REGEX_URL_YOUTUBE),
                 validar_numeros(likes, views)
             ]):
+                print(f"❌ Registro inválido: {fila}")
                 continue
 
             duracion_ms = duracion_a_ms(duracion)
