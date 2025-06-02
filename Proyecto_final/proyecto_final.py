@@ -159,6 +159,7 @@ def insertar_batch(nombre_archivo):
                 validar_regex("URL YouTube", url_youtube, REGEX_URL_YOUTUBE),
                 validar_numeros(likes, views)
             ]):
+                print('❌ Registro inválido')
                 continue
 
             duracion_ms = duracion_a_ms(duracion)
