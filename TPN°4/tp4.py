@@ -16,10 +16,11 @@ def duracion_a_ms(duracion):
     return ((h * 3600 + m * 60 + s) * 1000)
 
 REGEX_URI = r"^spotify:track:[\w\d]+$"
-REGEX_URL_SPOTIFY = r"^https?://open\.spotify\.com/track/[\w\d]+$"
+REGEX_URL_SPOTIFY = r"^https?://open\.spotify\.com/track/[\w\d]+(?:\?.*)?$"
 REGEX_URL_YOUTUBE = r"^https?://(www\.)?youtube\.com/watch\?v=[\w\-]+$"
 REGEX_TEXTO = r"^[\w\s]+$"
 REGEX_TIEMPO = r"^\d{2}:\d{2}:\d{2}$"
+
 
 def validar_regex(campo, valor, pattern):
     if not re.fullmatch(pattern, valor):
