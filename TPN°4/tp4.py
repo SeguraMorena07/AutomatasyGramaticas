@@ -72,49 +72,8 @@ def titulo():
     else:
         print("No se encontró el patrón buscado.")
 
-<<<<<<< HEAD
 
-def top_10_por_artista(): 
-=======
-"""def top_10_por_artista(): 
->>>>>>> main
-    artista_input = input("Ingrese el nombre del artista: ").strip().lower()
-    resultados = []
 
-    with open(ARCHIVO, encoding='utf-8') as archivo:
-        lector = csv.reader(archivo)
-        next(lector)  # Omitimos encabezados
-
-        for fila in lector:
-            try:
-                artista = fila[1]
-                track = fila[3]
-                duracion_ms = float(fila[17])
-                reproducciones = float(fila[21])  # Revisa que el índice sea correcto
-
-                if artista_input in artista.lower():
-                    resultados.append({
-                        'artista': artista,
-                        'track': track,
-                        'duracion_ms': duracion_ms,
-                        'reproducciones': reproducciones
-                    })
-            except Exception as e:
-                print(f"Error en la fila {fila}: {e}")
-
-    if not resultados:
-        print("❌ No se encontraron canciones de ese artista.")
-        return
-
-    resultados.sort(key=lambda x: x['reproducciones'], reverse=True)  # Orden descendente
-    top_10 = resultados[:10]  # Seleccionar los 10 primeros
-
-    print(f"\n{'Artista':30} | {'Canción':30} | {'Duración':10} | {'Reproducciones (M)'}")
-    print("-" * 90)
-    for r in top_10:
-        duracion = str(timedelta(seconds=int(r['duracion_ms']) // 1000))
-        print(f"{r['artista'][:30]:30} | {r['track'][:30]:30} | {duracion:10} | {round(r['reproducciones']/1_000_000, 2)} M")
-        """
 
 
 import csv
