@@ -133,56 +133,6 @@ def insertar_manual():
 
     print("✅ Registro insertado correctamente.")
 
-'''def insertar_batch(nombre_archivo):
-    nuevos_registros = []
-    with open(nombre_archivo, encoding='utf-8') as archivo:
-        lector = csv.reader(archivo)
-        next(lector)  # Saltar encabezado
-
-        for fila in lector:
-            try:
-                artista = fila[1].strip()
-                url_spotify = fila[2].strip()
-                track = fila[3].strip()
-                album = fila[4].strip()
-                uri = fila[6].strip()
-                duracion_ms = float(fila[17])
-                url_youtube = fila[18].strip()
-                likes = fila[23].strip()
-                views = fila[22].strip()
-
-                # Validaciones
-                if not all([
-                    validar_regex("Artista", artista, REGEX_TEXTO),
-                    validar_regex("Track", track, REGEX_TEXTO),
-                    validar_regex("Álbum", album, REGEX_TEXTO),
-                    validar_regex("URI Spotify", uri, REGEX_URI),
-                    validar_regex("URL Spotify", url_spotify, REGEX_URL_SPOTIFY),
-                    validar_regex("URL YouTube", url_youtube, REGEX_URL_YOUTUBE),
-                    validar_numeros(likes, views)
-                ]):
-                    print(f"❌ Registro inválido: {fila}")
-                    continue
-
-                nuevos_registros.append([
-                    "", artista, "", track, album,
-                    *["" for _ in range(12)],
-                    duracion_ms,
-                    *["" for _ in range(8)],
-                    views, likes,
-                    *["" for _ in range(10)],
-                    uri, url_spotify, url_youtube
-                ])
-            except (IndexError, ValueError):
-                print(f"❌ Error al procesar registro: {fila}")
-                continue
-
-    with open(ARCHIVO, mode='a', newline='', encoding='utf-8') as archivo:
-        writer = csv.writer(archivo)
-        writer.writerows(nuevos_registros)
-
-    print(f"✅ {len(nuevos_registros)} registros insertados.")'''
-
 def insertar_batch(nombre_archivo):
     nuevos_registros = []
 
@@ -209,7 +159,6 @@ def insertar_batch(nombre_archivo):
                 validar_regex("URL YouTube", url_youtube, REGEX_URL_YOUTUBE),
                 validar_numeros(likes, views)
             ]):
-                #print(f"❌ Registro inválido: {fila}")
                 continue
 
             duracion_ms = duracion_a_ms(duracion)
