@@ -60,7 +60,7 @@ def titulo():
     else:
         print("No se encontró el patrón buscado.")
 
-def top_10_por_artista(): 
+"""def top_10_por_artista(): 
     artista_input = input("Ingrese el nombre del artista: ").strip().lower()
     resultados = []
 
@@ -93,6 +93,60 @@ def top_10_por_artista():
     for r in top_10:
         duracion = str(timedelta(seconds=int(r['duracion_ms']) // 1000))
         print(f"{r['artista'][:30]:30} | {r['track'][:30]:30} | {duracion:10} | {round(r['reproducciones']/1_000_000, 2)} M")
+        """
+
+
+import csv
+import re
+from datetime import timedelta
+
+def top_10_por_artista():
+    artista_busqueda = input("Ingrese el nombre del artista: ").strip()
+    patron = re.compile(re.escape(artista_busqueda), re.IGNORECASE)  # Búsqueda insensible a mayúsculas
+
+    resultados = []
+
+    with open(ARCHIVO, encoding='utf-8') as music:
+        lector = csv.reader(music)
+        encabezado = next(lector)  # Saltar encabezado
+
+        for fila in lector:
+            if len(fila) < 21:  # Verificar que la fila tenga suficientes columnas
+                continue  
+
+            artista = fila[1]  # Columna 'Artist'
+            titulo = fila[3]  # Columna 'Track'
+            try:
+                duracion_ms = int(float(fila[17]))  # Columna 'Duration_ms'
+                reproducciones = int(float(fila[20]))  # Columna 'Views'
+            except ValueError:
+                continue  # Evitar errores de conversión
+
+            # Filtrar canciones por el artista buscado
+            if re.search(patron, artista):    
+                print(f"✅ Coincidencia encontrada: {artista}")
+                # Convertir duración a HH:MM:SS
+                duracion_hms = str(timedelta(milliseconds=duracion_ms))
+                resultados.append((artista, titulo, duracion_hms, reproducciones))
+
+    # Ordenar por cantidad de reproducciones en orden descendente
+    resultados.sort(key=lambda x: x[3], reverse=True)
+
+    # Mostrar los 10 primeros
+    if resultados:
+        print("\n🎶 **Top 10 temas más reproducidos:**")
+        print(f"{'Artista':25} | {'Tema':30} | {'Duración':9} | {'Reproducciones (M)'}")
+        print("-" * 80)
+        for artista, titulo, duracion, reproducciones in resultados[:2]:  # Corrección del índice
+            print(f"{artista[:25]:25} | {titulo[:30]:30} | {duracion:9} | {reproducciones / 1_000_000:.2f}M")
+    else:
+        print(f"{resultados})")
+     #   print("❌ No se encontraron canciones para ese artista.")
+
+
+
+
+
 
 def insertar_manual(): #Arreglar URL de Spotify
     print("== Inserción manual ==")
@@ -156,7 +210,7 @@ def insertar_batch(nombre_archivo): #ARREGLAR BATCH
                 validar_regex("URL YouTube", url_youtube, REGEX_URL_YOUTUBE),
                 validar_numeros(likes, views)
             ]):
-                print(f"❌ Registro inválido: {fila}")
+                #print(f"❌ Registro inválido: {fila}")
                 continue
 
             duracion_ms = duracion_a_ms(duracion)
