@@ -2,7 +2,7 @@ import csv
 import re
 from datetime import timedelta
 
-ARCHIVO = 'TPN°4/music.csv'
+ARCHIVO = 'music.csv' #Cambiar por el archivo que se desea utilizar
 
 def formato_duracion(ms):
     segundos = int(float(ms) // 1000)
@@ -16,8 +16,8 @@ def duracion_a_ms(duracion):
     return ((h * 3600 + m * 60 + s) * 1000)
 
 REGEX_URI = r"^spotify:track:[\w\d]+$"
-REGEX_URL_SPOTIFY = r"^https?://open\.spotify\.com/track/[\w\d]+(?:\?.*)?$"
-REGEX_URL_YOUTUBE = r"^https?://(www\.)?youtube\.com/watch\?v=[\w\-]+$"
+REGEX_URL_SPOTIFY = r"^https?://open\.spotify\.com/(intl-[a-z]{2}/)?track/[\w\d]+(?:\?.*)?$"
+REGEX_URL_YOUTUBE = r"^https?://(www\.)?youtube\.com/watch\?v=[\w\-]+(&[\w\-_=]+)*$"
 REGEX_TEXTO = r"^[\w\s]+$"
 REGEX_TIEMPO = r"^\d{2}:\d{2}:\d{2}$"
 
@@ -60,20 +60,21 @@ def titulo():
     else:
         print("No se encontró el patrón buscado.")
 
+
 def top_10_por_artista(): 
     artista_input = input("Ingrese el nombre del artista: ").strip().lower()
     resultados = []
 
     with open(ARCHIVO, encoding='utf-8') as archivo:
         lector = csv.reader(archivo)
-        next(lector)
+        next(lector)  # Omitimos encabezados
 
         for fila in lector:
             try:
                 artista = fila[1]
                 track = fila[3]
                 duracion_ms = float(fila[17])
-                reproducciones = float(fila[27])
+                reproducciones = float(fila[21])  # Revisa que el índice sea correcto
 
                 if artista_input in artista.lower():
                     resultados.append({
@@ -82,17 +83,22 @@ def top_10_por_artista():
                         'duracion_ms': duracion_ms,
                         'reproducciones': reproducciones
                     })
-            except:
-                continue
+            except Exception as e:
+                print(f"Error en la fila {fila}: {e}")
 
-    resultados.sort(key=lambda x: x['reproducciones'], reverse=True)
-    top_10 = resultados[:10]
+    if not resultados:
+        print("❌ No se encontraron canciones de ese artista.")
+        return
+
+    resultados.sort(key=lambda x: x['reproducciones'], reverse=True)  # Orden descendente
+    top_10 = resultados[:10]  # Seleccionar los 10 primeros
 
     print(f"\n{'Artista':30} | {'Canción':30} | {'Duración':10} | {'Reproducciones (M)'}")
     print("-" * 90)
     for r in top_10:
         duracion = str(timedelta(seconds=int(r['duracion_ms']) // 1000))
         print(f"{r['artista'][:30]:30} | {r['track'][:30]:30} | {duracion:10} | {round(r['reproducciones']/1_000_000, 2)} M")
+
 
 def insertar_manual(): #Arreglar URL de Spotify
     print("== Inserción manual ==")
@@ -134,8 +140,8 @@ def insertar_manual(): #Arreglar URL de Spotify
         ])
 
     print("✅ Registro insertado correctamente.")
-
-def insertar_batch(nombre_archivo): #ARREGLAR BATCH
+"""
+def insertar_batch(nombre_archivo): 
     nuevos_registros = []
     with open(nombre_archivo, encoding='utf-8') as archivo:
         lector = csv.reader(archivo)
@@ -175,7 +181,7 @@ def insertar_batch(nombre_archivo): #ARREGLAR BATCH
         writer.writerows(nuevos_registros)
 
     print(f"✅ {len(nuevos_registros)} registros insertados.")
-
+"""
 def mostrar_albumes_por_artista():
     artista_input = input("Ingrese el nombre del artista: ").strip().lower()
     albumes = {}
@@ -209,34 +215,6 @@ def mostrar_albumes_por_artista():
         duracion_hms = str(timedelta(seconds=duracion_seg))
         print(f"{album[:40]:40} | {datos['canciones']:9} | {duracion_hms}")
 
-def menu(): #El menu se puede poner en otro archivo, para ahorrar lineas de codigo
-    while True:
-        print("\n===== MENÚ PRINCIPAL =====")
-        print("1. Buscar por título o artista")
-        print("2. Mostrar top 10 por artista")
-        print("3. Insertar registro manual")
-        print("4. Insertar registros desde archivo CSV")
-        print("5. Mostrar álbumes por artista")
-        print("0. Salir")
 
-        opcion = input("Seleccione una opción: ").strip()
 
-        if opcion == '1':
-            titulo()
-        elif opcion == '2':
-            top_10_por_artista()
-        elif opcion == '3':
-            insertar_manual()
-        elif opcion == '4':
-            nombre = input("Nombre del archivo CSV: ").strip()
-            insertar_batch(nombre)
-        elif opcion == '5':
-            mostrar_albumes_por_artista()
-        elif opcion == '0':
-            print("Saliendo del programa...")
-            break
-        else:
-            print("❌ Opción no válida. Intente nuevamente.")
 
-if __name__ == "__main__":
-    menu()
